@@ -15,7 +15,6 @@ const Login = () => {
     password: ''
   });
   useEffect(()=>{
-    console.log(isAuthenticated);
     if(isAuthenticated)
         navigate("/chat");
   },[])
