@@ -5,3 +5,5 @@ langchain-community
 chromadb
 sentence-transformers
 pydantic
+pymysql
+passlib[bcrypt]
