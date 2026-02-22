@@ -7,6 +7,6 @@ def get_session_history(session_id: str):
         store[session_id] = ChatMessageHistory()
 
     history = store[session_id]
-    history.messages = history.messages[-15:]  
+    history.messages = history.messages[-8:]  
     return history
 
