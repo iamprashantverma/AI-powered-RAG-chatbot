@@ -11,7 +11,7 @@ from app.models.user import User
 router = APIRouter(prefix="/chat", tags=["Chat"])
 
 
-@router.post("/", response_model=dict)
+@router.post("", response_model=dict)
 async def chat(req: ChatRequest,current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     user_email = current_user["sub"]
 
@@ -30,6 +30,6 @@ async def chat(req: ChatRequest,current_user: User = Depends(get_current_user), 
     return {"reply": reply}
 
 
-@router.get("/", response_model=List[ChatResponse])
+@router.get("", response_model=List[ChatResponse])
 async def get_chat_history(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     return get_user_history(db, current_user["sub"])
