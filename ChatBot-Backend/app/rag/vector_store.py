@@ -9,10 +9,7 @@ persist_dir = "vectordb"
 
 
 def get_db():
-    return Chroma(
-        persist_directory=persist_dir,
-        embedding_function=embeddings
-    )
+    return Chroma( persist_directory=persist_dir, embedding_function=embeddings )
 
 
 def ingest_incremental(texts: list[str]):
