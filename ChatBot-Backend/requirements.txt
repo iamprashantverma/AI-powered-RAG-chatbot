@@ -23,4 +23,5 @@ pdfplumber
 python-docx
 pandas
 openpyxl
-fitz
+pymupdf
+sentence_transformers
