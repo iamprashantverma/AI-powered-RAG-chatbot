@@ -23,3 +23,4 @@ pdfplumber
 python-docx
 pandas
 openpyxl
+fitz

@@ -62,7 +62,6 @@ class FileTextExtractionService:
 
     @staticmethod
     def _extract_txt(path: str) -> str:
-        # utf-8 with fallback for messy files
         try:
             with open(path, "r", encoding="utf-8") as f:
                 return f.read()
