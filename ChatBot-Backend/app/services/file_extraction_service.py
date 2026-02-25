@@ -1,5 +1,6 @@
 import tempfile
 import os
+
 import fitz
 from docx import Document
 import pandas as pd
@@ -9,6 +10,9 @@ class FileTextExtractionService:
 
     @staticmethod
     def extract(file_bytes: bytes, filename: str) -> str:
+        if not filename or "." not in filename:
+            raise ValueError("Invalid file name")
+
         suffix = filename.split(".")[-1].lower()
 
         tmp = tempfile.NamedTemporaryFile(delete=False, suffix="." + suffix)
@@ -25,16 +29,15 @@ class FileTextExtractionService:
             elif suffix in ("xlsx", "xls"):
                 text = FileTextExtractionService._extract_excel(tmp.name)
 
-            elif suffix == "txt":
-                text = FileTextExtractionService._extract_txt(tmp.name)
-
             else:
-                raise ValueError("Only PDF, DOCX, Excel, and TXT files are supported")
+                raise ValueError("Only PDF, DOCX, and Excel files are supported")
 
-            if not text.strip():
+            cleaned = FileTextExtractionService._clean(text)
+
+            if not cleaned:
                 raise ValueError("No readable text found in file")
 
-            return FileTextExtractionService._clean(text)
+            return cleaned
 
         finally:
             os.unlink(tmp.name)
@@ -50,24 +53,24 @@ class FileTextExtractionService:
     @staticmethod
     def _extract_docx(path: str) -> str:
         doc = Document(path)
-        return "\n".join(p.text for p in doc.paragraphs if p.text)
+        return "\n".join(p.text for p in doc.paragraphs if p.text.strip())
 
     @staticmethod
     def _extract_excel(path: str) -> str:
         sheets = pd.read_excel(path, sheet_name=None)
-        text = ""
-        for sheet, df in sheets.items():
-            text += df.fillna("").to_string(index=False)
-        return text
+        parts = []
 
-    @staticmethod
-    def _extract_txt(path: str) -> str:
-        try:
-            with open(path, "r", encoding="utf-8") as f:
-                return f.read()
-        except UnicodeDecodeError:
-            with open(path, "r", encoding="latin-1") as f:
-                return f.read()
+        for sheet, df in sheets.items():
+            df = df.fillna("")
+
+            for _, row in df.iterrows():
+                sentence = " | ".join(
+                    f"{col.replace('_', ' ')}: {row[col]}"
+                    for col in df.columns
+                )
+                parts.append(f"Sheet {sheet} record — {sentence}.")
+
+        return "\n".join(parts)
 
     @staticmethod
     def _clean(text: str) -> str:
