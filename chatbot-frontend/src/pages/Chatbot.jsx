@@ -95,7 +95,7 @@ const Chatbot = () => {
         { id: Date.now() + 2, type: 'ai', text: aiText },
       ]);
     } catch (error) {
-      if (axios.isCancel(error) || error.name === 'CanceledError' || error.code === 'ERR_CANCELED') {
+      if (axios.isCancel(error)|| error?.name === 'CanceledError' || error?.code === 'ERR_CANCELED') {
         setMessages(prev => prev.filter(m => !m.isThinking));
         return;
       }
@@ -103,7 +103,7 @@ const Chatbot = () => {
       toast.error('Failed to get AI response');
       setMessages(prev => [
         ...prev.filter(m => !m.isThinking),
-        { id: Date.now(), type: 'ai', text: 'Sorry, something went wrong. Please try again.' },
+        { id: Date.now(), type: 'ai', text: error?.response?.data?.detail||'Sorry, something went wrong. Please try again.' },
       ]);
     } finally {
       setIsLoading(false);
@@ -173,7 +173,7 @@ const Chatbot = () => {
               onChange={e => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Type your message..."
-              disabled={isLoading}
+  
               rows={1}
               maxLength={500}
             />
