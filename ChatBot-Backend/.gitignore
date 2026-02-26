@@ -21,7 +21,7 @@ huggingface/
 # OS files
 .DS_Store
 Thumbs.db
-
+vectordb/
 # IDE
 .vscode/
 .idea/
